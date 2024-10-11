@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/cd2108da-a584-46de-91f5-52e1058dc6b0)
+![image](https://github.com/user-attachments/assets/cd2108da-a584-46de-91f5-52e1058dc6b0) 
 
 
 <div align="center">
@@ -93,16 +93,28 @@ The `hook_execve` function hooks into the system’s `execve` syscall, logging d
 
 ## Installation
 
-1. Git download: 
+1. Git: 
 ```bash
 git clone https://github.com/Trevohack/R0DDY 
 cd R0DDY 
 make 
 ```
 
-2. Use auto-setup: 
+## Usage 
+
+* Insert the R0DDY to the kernel! 
+
 ```bash
-curl 
+insmod R0DDY.ko 
 ```
+
+* Watch out `/var/log/cmd.log` 
+
+```bash
+tail -f /var/log/cmd.log 
+cat /var/log/cmd.log 
+```
+
+
 
 ---
