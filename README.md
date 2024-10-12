@@ -91,6 +91,17 @@ log_command(filename, args, cwd, tty);
 
 The `hook_execve` function hooks into the system’s `execve` syscall, logging details about each executed command (such as the executable name, arguments, current directory, and terminal). It also hides the rootkit if needed and blocks forbidden commands. After logging, it passes control back to the original `execve` to run the command normally. Error handling ensures that memory is properly freed in case of failure. 
 
+## Upcoming Features
+
+* [X] Capture tty where the command is run
+* [x] Capture current working directory where the command is run
+* [x] Get the time when the command is run
+* [x] R0DDY hides itself 
+* [ ] Hide the log file  
+* [ ] Compatibility for older and newer kernels
+* [ ] Persistence
+* [x] Efficient logging 
+
 ## Installation
 
 1. Git: 
@@ -115,6 +126,10 @@ tail -f /var/log/cmd.log
 cat /var/log/cmd.log 
 ```
 
+
+## Contribute
+
+* We welcome contributions to help enhance this tool! If you're interested in collaborating, feel free to reach out: . Your support is appreciated!
 
 
 ---
