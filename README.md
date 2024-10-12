@@ -1,7 +1,5 @@
 ![image](https://github.com/user-attachments/assets/cd2108da-a584-46de-91f5-52e1058dc6b0) 
 
-
-<div align="center">
   R0DDY: Linux kernel-level rootkit (ring0) to log all commands executed in the system.<br> 
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Trevohack/R0DDY?style=for-the-badge&labelColor=blue&color=violet">
   <img alt="Static Badge" src="https://img.shields.io/badge/Tested--on-Linux-violet?style=for-the-badge&logo=linux&logoColor=black&labelColor=blue">
