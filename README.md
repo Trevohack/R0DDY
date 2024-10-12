@@ -35,6 +35,7 @@
 	- **Full Command**: The complete command with arguments.
 	- **Syscall Hooks**: To achieve this, R0DDY hooks the `execve` and `execveat` system calls, which are responsible for executing programs.
 
+![image](https://github.com/user-attachments/assets/b2d1ac54-0d30-4024-bf74-2b531c8f29f8)
 
 
 ## Important
