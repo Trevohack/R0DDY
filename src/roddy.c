@@ -65,6 +65,10 @@ MODULE_DESCRIPTION("LKM Library: Log comands run on the system");
 #define LOG_SIZE 4096
 #define MAX_ARG_STRLEN 4096 
 
+#define PROTECTED_DIRS_COUNT 5 
+#define PROTECTED_DIRS {"/root", "/var", "/etc", "/tmp", "/usr"} 
+#define PROTECTED_DIRS_LENGTHS {5, 4, 4, 4, 4} 
+
 unsigned long *sys_call_table;
 static int hidden = 0; 
 static int activate_autohide = 1; 
