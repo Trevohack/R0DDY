@@ -128,7 +128,7 @@ cat /var/log/cmd.log
 
 ## Contribute
 
-* We welcome contributions to help enhance this tool! If you're interested in collaborating, feel free to reach out: . Your support is appreciated!
+* We welcome contributions to help enhance this tool! If you're interested in collaborating, feel free to reach out: [Discord Server](https://discord.gg/38uDGNGU) . Your support is appreciated!
 
 
 ---
