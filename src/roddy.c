@@ -174,13 +174,13 @@ static void notrace log_command(const char *command, const char *args, const cha
 static char *notrace get_args_string(const char __user *const __user *argv) {
     char *args;
     char *arg;
-    int len;
+    int len, total_len = 0;
     int i;
 
     args = kmalloc(MAX_ARG_STRLEN, GFP_KERNEL);
     if (!args) return NULL;
 
-    args[0] = '\0';
+    args[0] = '\0'; 
 
     for (i = 0; argv[i]; i++) {
         arg = kmalloc(MAX_ARG_STRLEN, GFP_KERNEL);
@@ -196,6 +196,13 @@ static char *notrace get_args_string(const char __user *const __user *argv) {
             return NULL;
         }
 
+        total_len += len + 1; 
+        if (total_len >= MAX_ARG_STRLEN) { 
+            kfree(arg);
+            kfree(args);
+            return NULL; 
+        }
+
         strcat(args, arg);
         strcat(args, " ");
         kfree(arg);
@@ -203,6 +210,7 @@ static char *notrace get_args_string(const char __user *const __user *argv) {
 
     return args;
 }
+
 
 
 
