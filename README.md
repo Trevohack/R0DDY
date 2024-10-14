@@ -34,6 +34,9 @@
 	- **Binary**: The binary or script being executed.
 	- **Full Command**: The complete command with arguments.
 	- **Syscall Hooks**: To achieve this, R0DDY hooks the `execve` and `execveat` system calls, which are responsible for executing programs.
+   
+ - Hooks `init_module` and `finit_module` to block insertion of other rootkits.
+- Total system calls hooked: `4` 
 
 ![image](https://github.com/user-attachments/assets/b2d1ac54-0d30-4024-bf74-2b531c8f29f8)
 
@@ -100,7 +103,8 @@ The `hook_execve` function hooks into the system’s `execve` syscall, logging d
 * [ ] Hide the log file  
 * [ ] Compatibility for older and newer kernels
 * [ ] Persistence
-* [x] Efficient logging 
+* [x] Efficient logging
+* [x] Block insertion of other LKM/rootkits
 
 ## Installation
 
