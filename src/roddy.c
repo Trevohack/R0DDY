@@ -7,7 +7,7 @@
 #include <linux/slab.h>
 #include <linux/dcache.h>
 #include <linux/file.h>
-#include <linux/kallsyms.h>
+#include <linux/kallsyms.h> 
 #include <linux/limits.h>
 #include <linux/namei.h>
 #include <linux/tty.h>
@@ -97,7 +97,7 @@ static void notrace log_command(const char *command, const char *args, const cha
     file = filp_open(LOG_FILE, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (!IS_ERR(file)) {
 
-        vfs_llseek(file, 0, SEEK_END);
+        vfs_llseek(file, 0, SEEK_END);  // Move to end manually
         vfs_write(file, log_entry, strlen(log_entry), &file->f_pos); 
         filp_close(file, NULL);
     }
