@@ -17,6 +17,7 @@
 
 ---
 
+
   
 
 ## Features
@@ -105,6 +106,7 @@ The `hook_execve` function hooks into the system’s `execve` syscall, logging d
 * [ ] Persistence
 * [x] Efficient logging
 * [x] Block insertion of other LKM/rootkits
+* [X] Log Commands and send over a server  
 
 ## Installation
 
