@@ -1,5 +1,5 @@
 ![image](https://github.com/user-attachments/assets/cd2108da-a584-46de-91f5-52e1058dc6b0) 
-t
+
 <div align="center">
   <b>R0DDY</b>: Linux kernel-level rootkit (ring0) to log all commands executed in the system <strong>now remotely</strong>.<br> 
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Trevohack/R0DDY?style=for-the-badge&labelColor=blue&color=violet">
